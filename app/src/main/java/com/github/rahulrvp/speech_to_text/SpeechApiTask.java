@@ -1,6 +1,8 @@
 package com.github.rahulrvp.speech_to_text;
 
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 
@@ -31,6 +33,7 @@ public class SpeechApiTask extends AsyncTask<Void, Void, Response> {
         return this;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected Response doInBackground(Void... voids) {
         // TODO: 16/12/16 Do authentication with G Cloud before this
@@ -38,10 +41,11 @@ public class SpeechApiTask extends AsyncTask<Void, Void, Response> {
         RecognitionAudio audio = new RecognitionAudio();
         audio.setContent(mFile);
 
-        Request request = new Request();
+        Request request = new Request(mFile);
         request.setAudio(audio);
 
-        HTTPManager httpManager = new HTTPManager("https://speech.googleapis.com/v1beta1/speech:syncrecognize");
+        String key = "?key=<the api key>";
+        HTTPManager httpManager = new HTTPManager("https://speech.googleapis.com/v1beta1/speech:syncrecognize" + key);
         return httpManager.post(new Gson().toJson(request));
     }
 

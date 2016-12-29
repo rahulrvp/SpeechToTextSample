@@ -37,7 +37,7 @@ public class RecognitionAudio {
 
                 Log.d("RecognitionAudio", "File length read: " + len);
 
-                result = new String(Base64.encode(bytes, Base64.DEFAULT));
+                result = new String(Base64.encode(bytes, Base64.NO_WRAP));
             } catch (IOException e) {
                 e.printStackTrace();
             }
