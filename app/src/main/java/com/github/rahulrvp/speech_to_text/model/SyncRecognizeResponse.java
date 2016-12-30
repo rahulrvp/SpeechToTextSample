@@ -8,9 +8,14 @@ package com.github.rahulrvp.speech_to_text.model;
 
 
 public class SyncRecognizeResponse {
-    SpeechRecognitionResult[] results;
+    private SpeechRecognitionResult[] results;
+    private SpeechRecognitionError error;
 
     public SpeechRecognitionResult[] getResults() {
         return results;
+    }
+
+    public SpeechRecognitionError getError() {
+        return error;
     }
 }

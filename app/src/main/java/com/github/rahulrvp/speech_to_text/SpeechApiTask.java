@@ -1,10 +1,11 @@
 package com.github.rahulrvp.speech_to_text;
 
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import com.github.rahulrvp.speech_to_text.model.RecognitionRequest;
+import com.github.rahulrvp.speech_to_text.model.SpeechRecognitionError;
+import com.github.rahulrvp.speech_to_text.model.SpeechRecognitionResult;
 import com.github.rahulrvp.speech_to_text.model.SyncRecognizeResponse;
 import com.github.rahulrvp.speechapisample.BuildConfig;
 import com.google.gson.Gson;
@@ -21,6 +22,7 @@ import in.fortelogic.httpmanager.Response;
 
 public class SpeechApiTask extends AsyncTask<Void, Void, Response> {
 
+    private static final String LOG_TAG = "SpeechApiTask";
     private RecognitionRequest mRequest;
     private ConversionListener mListener;
 
@@ -34,11 +36,10 @@ public class SpeechApiTask extends AsyncTask<Void, Void, Response> {
         return this;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected Response doInBackground(Void... voids) {
         String apiUrl = "https://speech.googleapis.com/v1beta1/speech:syncrecognize";
-        String key = "?key=" + BuildConfig.API_KEY;
+        String key = "?key=" + BuildConfig.SPEECH_APIKEY;
 
         HTTPManager httpManager = new HTTPManager(apiUrl + key);
         return httpManager.post(new Gson().toJson(mRequest));
@@ -46,13 +47,30 @@ public class SpeechApiTask extends AsyncTask<Void, Void, Response> {
 
     @Override
     protected void onPostExecute(Response response) {
-        if (response.getStatusCode() == 200) {
-            if (mListener != null) {
-                mListener.onSuccess(new Gson().fromJson(response.getResponseBody(), SyncRecognizeResponse.class));
+        if (mListener != null) {
+            SyncRecognizeResponse recognizeResponse = null;
+
+            try {
+                String json = response.getResponseBody();
+                recognizeResponse = new Gson().fromJson(json, SyncRecognizeResponse.class);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getMessage());
             }
-        } else {
-            if (mListener != null) {
-                mListener.onFailure(response.getStatusCode(), response.getResponseBody());
+
+            if (response.getStatusCode() == 200) {
+                SpeechRecognitionResult[] results = null;
+                if (recognizeResponse != null) {
+                    results = recognizeResponse.getResults();
+                }
+
+                mListener.onSuccess(results);
+            } else {
+                SpeechRecognitionError error = null;
+                if (recognizeResponse != null) {
+                    error = recognizeResponse.getError();
+                }
+
+                mListener.onFailure(error);
             }
         }
     }

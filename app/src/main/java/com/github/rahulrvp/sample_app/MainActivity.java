@@ -3,19 +3,19 @@ package com.github.rahulrvp.sample_app;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.github.rahulrvp.speech_to_text.ConversionListener;
 import com.github.rahulrvp.speech_to_text.Encoding;
+import com.github.rahulrvp.speech_to_text.SpeechApi;
+import com.github.rahulrvp.speech_to_text.Utils;
 import com.github.rahulrvp.speech_to_text.model.RecognitionAudio;
 import com.github.rahulrvp.speech_to_text.model.RecognitionConfig;
 import com.github.rahulrvp.speech_to_text.model.RecognitionRequest;
-import com.github.rahulrvp.speech_to_text.SpeechApi;
 import com.github.rahulrvp.speech_to_text.model.SpeechRecognitionAlternative;
+import com.github.rahulrvp.speech_to_text.model.SpeechRecognitionError;
 import com.github.rahulrvp.speech_to_text.model.SpeechRecognitionResult;
-import com.github.rahulrvp.speech_to_text.model.SyncRecognizeResponse;
-import com.github.rahulrvp.speech_to_text.Utils;
 import com.github.rahulrvp.speechapisample.R;
 
 import java.io.File;
@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
         new SpeechApi(request)
                 .convert(new ConversionListener() {
                     @Override
-                    public void onSuccess(SyncRecognizeResponse response) {
-                        SpeechRecognitionResult[] results = response.getResults();
+                    public void onSuccess(SpeechRecognitionResult[] results) {
                         if (results != null && results.length > 0) {
                             SpeechRecognitionResult result = results[0];
                             if (result != null) {
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (alternatives != null && alternatives.length > 0) {
                                     SpeechRecognitionAlternative alternative = alternatives[0];
                                     if (alternative != null) {
-                                        Log.d(LOG_TAG, "Converted text: " + alternative.getTranscript());
+                                        showToast(alternative.getTranscript());
                                     }
                                 }
                             }
@@ -74,11 +73,15 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(int code, String message) {
-                        Log.d(LOG_TAG, "Error code: " + code);
-                        Log.d(LOG_TAG, "Error message: " + message);
+                    public void onFailure(SpeechRecognitionError error) {
+                        if (error != null) {
+                            showToast(error.getCode() + ", " + error.getStatus());
+                        }
                     }
                 });
+    }
 
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

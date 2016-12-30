@@ -1,6 +1,8 @@
 package com.github.rahulrvp.speech_to_text;
 
-import com.github.rahulrvp.speech_to_text.model.SyncRecognizeResponse;
+
+import com.github.rahulrvp.speech_to_text.model.SpeechRecognitionError;
+import com.github.rahulrvp.speech_to_text.model.SpeechRecognitionResult;
 
 /**
  * @author Rahul Raveendran V P
@@ -10,7 +12,7 @@ import com.github.rahulrvp.speech_to_text.model.SyncRecognizeResponse;
 
 
 public interface ConversionListener {
-    void onSuccess(SyncRecognizeResponse response);
+    void onSuccess(SpeechRecognitionResult[] results);
 
-    void onFailure(int code, String message);
+    void onFailure(SpeechRecognitionError error);
 }

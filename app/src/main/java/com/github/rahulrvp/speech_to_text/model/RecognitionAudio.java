@@ -1,12 +1,5 @@
 package com.github.rahulrvp.speech_to_text.model;
 
-import android.util.Base64;
-import android.util.Log;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 /**
  * @author Rahul Raveendran V P
  *         Created on 14/12/16 @ 1:23 PM
