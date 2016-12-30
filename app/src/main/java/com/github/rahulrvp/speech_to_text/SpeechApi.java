@@ -1,6 +1,6 @@
 package com.github.rahulrvp.speech_to_text;
 
-import java.io.File;
+import com.github.rahulrvp.speech_to_text.model.RecognitionRequest;
 
 /**
  * @author Rahul Raveendran V P
@@ -10,17 +10,13 @@ import java.io.File;
 
 
 public class SpeechApi {
-    private File mFile;
+    private RecognitionRequest request;
 
-    public SpeechApi(File audioFile) {
-        mFile = audioFile;
-    }
-
-    public SpeechApi(String path) {
-        mFile = new File(path);
+    public SpeechApi(RecognitionRequest request) {
+        this.request = request;
     }
 
     public void convert(ConversionListener listener) {
-        new SpeechApiTask(mFile).setListener(listener).execute();
+        new SpeechApiTask(request).setListener(listener).execute();
     }
 }

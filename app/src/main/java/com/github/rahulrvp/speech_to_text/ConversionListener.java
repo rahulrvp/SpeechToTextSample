@@ -1,5 +1,7 @@
 package com.github.rahulrvp.speech_to_text;
 
+import com.github.rahulrvp.speech_to_text.model.SyncRecognizeResponse;
+
 /**
  * @author Rahul Raveendran V P
  *         Created on 16/12/16 @ 7:52 PM
@@ -8,7 +10,7 @@ package com.github.rahulrvp.speech_to_text;
 
 
 public interface ConversionListener {
-    void onSuccess(String convertedText);
+    void onSuccess(SyncRecognizeResponse response);
 
     void onFailure(int code, String message);
 }

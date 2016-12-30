@@ -4,9 +4,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
+import com.github.rahulrvp.speech_to_text.model.RecognitionRequest;
+import com.github.rahulrvp.speech_to_text.model.SyncRecognizeResponse;
+import com.github.rahulrvp.speechapisample.BuildConfig;
 import com.google.gson.Gson;
-
-import java.io.File;
 
 import in.fortelogic.httpmanager.HTTPManager;
 import in.fortelogic.httpmanager.Response;
@@ -20,11 +21,11 @@ import in.fortelogic.httpmanager.Response;
 
 public class SpeechApiTask extends AsyncTask<Void, Void, Response> {
 
-    private File mFile;
+    private RecognitionRequest mRequest;
     private ConversionListener mListener;
 
-    public SpeechApiTask(File audioFile) {
-        mFile = audioFile;
+    public SpeechApiTask(RecognitionRequest request) {
+        mRequest = request;
     }
 
     public SpeechApiTask setListener(ConversionListener listener) {
@@ -36,26 +37,18 @@ public class SpeechApiTask extends AsyncTask<Void, Void, Response> {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected Response doInBackground(Void... voids) {
-        // TODO: 16/12/16 Do authentication with G Cloud before this
+        String apiUrl = "https://speech.googleapis.com/v1beta1/speech:syncrecognize";
+        String key = "?key=" + BuildConfig.API_KEY;
 
-        RecognitionAudio audio = new RecognitionAudio();
-        audio.setContent(mFile);
-
-        Request request = new Request(mFile);
-        request.setAudio(audio);
-
-        String key = "?key=<the api key>";
-        HTTPManager httpManager = new HTTPManager("https://speech.googleapis.com/v1beta1/speech:syncrecognize" + key);
-        return httpManager.post(new Gson().toJson(request));
+        HTTPManager httpManager = new HTTPManager(apiUrl + key);
+        return httpManager.post(new Gson().toJson(mRequest));
     }
 
     @Override
     protected void onPostExecute(Response response) {
-        // TODO: 16/12/16 Fix this response reading when Api is working
-
         if (response.getStatusCode() == 200) {
             if (mListener != null) {
-                mListener.onSuccess(response.getResponseBody());
+                mListener.onSuccess(new Gson().fromJson(response.getResponseBody(), SyncRecognizeResponse.class));
             }
         } else {
             if (mListener != null) {

@@ -9,24 +9,14 @@ import java.io.IOException;
 
 /**
  * @author Rahul Raveendran V P
- *         Created on 14/12/16 @ 1:23 PM
+ *         Created on 30/12/16 @ 11:07 AM
  *         https://github.com/rahulrvp
  */
 
 
-public class RecognitionAudio {
-    private String content;
-    private String uri;
+public class Utils {
 
-    public void setContent(File audioFile) {
-        content = getBase64String(audioFile);
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    private String getBase64String(File audioFile) {
+    public static String getBase64String(File audioFile) {
         String result = null;
 
         if (audioFile != null && audioFile.exists()) {
